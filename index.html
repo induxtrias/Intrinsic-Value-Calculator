@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intrinsic Value Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Intrinsic Value Calculator</h1>
+
+    <h2>Step 1: Enter Free Cash Flow (FCF) Values</h2>
+    <label for="cashFlow">Free Cash Flow for next years (comma-separated):</label>
+    <input type="text" id="cashFlow" placeholder="e.g. 100000, 120000, 140000">
+
+    <h2>Step 2: Enter Discount Rate</h2>
+    <label for="discountRate">Discount Rate (%):</label>
+    <input type="number" id="discountRate" placeholder="e.g. 10" step="0.1">
+
+    <h2>Step 3: Enter Terminal Growth Rate</h2>
+    <label for="terminalGrowth">Terminal Growth Rate (%):</label>
+    <input type="number" id="terminalGrowth" placeholder="e.g. 3" step="0.1">
+
+    <button onclick="calculateIntrinsicValue()">Calculate Intrinsic Value</button>
+
+    <div id="result"></div>
+
+    <script>
+        function calculateIntrinsicValue() {
+            const cashFlows = document.getElementById('cashFlow').value.split(',').map(Number);
+            const discountRate = Number(document.getElementById('discountRate').value) / 100;
+            const terminalGrowth = Number(document.getElementById('terminalGrowth').value) / 100;
+
+            // Calculate Present Value of Cash Flows
+            let presentValue = 0;
+            cashFlows.forEach((cf, index) => {
+                presentValue += cf / Math.pow(1 + discountRate, index + 1);
+            });
+
+            // Calculate Terminal Value
+            const terminalValue = cashFlows[cashFlows.length - 1] * (1 + terminalGrowth) / (discountRate - terminalGrowth);
+            const presentTerminalValue = terminalValue / Math.pow(1 + discountRate, cashFlows.length);
+
+            // Total Intrinsic Value
+            const intrinsicValue = presentValue + presentTerminalValue;
+            document.getElementById('result').innerText = `Intrinsic Value per Share: $${(intrinsicValue / 10000).toFixed(2)}`; // Assuming 1000 shares for demonstration
+        }
+    </script>
+</body>
+</html>
